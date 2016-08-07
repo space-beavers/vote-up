@@ -46,7 +46,7 @@
       }
 
       .tagsPlaceholder:after {
-        content: 'Tap to edit tags';
+        content: 'Tap to edit tags (comma separated)';
         opacity: 0.5;
       }
 
@@ -61,6 +61,7 @@
         pointer-events: none;
       }
     </style>
+    <!-- TODO: make edit/view version of a topic-card -->
     <h1
         id="title"
         class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
@@ -73,6 +74,7 @@
         id="tags"
         class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
         contenteditable$="[[editable]]"></p>
+
   </template>
   <script>
     Polymer({
@@ -98,9 +100,9 @@
         },
 
         tags: {
-          type: String,
+          type: Array,
           notify: true,
-          value: ''
+          value: []
         },
 
         votes: {
@@ -141,7 +143,6 @@
       },
 
       updateTextContent(title, description, tags) {
-        console.log(arguments);
         this.$.title.textContent = title;
         this.$.description.textContent = description;
         this.$.tags.textContent = tags;
