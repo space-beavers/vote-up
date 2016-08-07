@@ -1,0 +1,95 @@
+<link rel="import" href="elements/vu-elements.html">
+<link rel="import" href="bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="bower_components/polymerfire/polymerfire.html">
+
+<dom-module id="vote-up-app">
+  <template>
+    <style include="vote-up-app-shared-styles"></style>
+    <vu-toolbar
+        signed-in="[[signedIn]]"
+        on-sign-out="signOut">
+    </vu-toolbar>
+    <vu-login
+        on-sign-in="signIn"
+        signed-in="[[signedIn]]"
+        disabled="[[!online]]">
+    </vu-login>
+    <firebase-auth
+        id="auth"
+        app-name="vote-up"
+        provider="google"
+        signed-in="{{signedIn}}"
+        user="{{user}}">
+    </firebase-auth>
+    <paper-fab
+        icon="add"
+        on-tap="create"
+        disabled="[[!online]]"
+        aria-label="Add topic">
+    </paper-fab>
+    <vu-editor
+        id="editor"
+        topic="{{editableTopic}}"
+        on-close="commitChange">
+    </vu-editor>
+    <firebase-document
+        id="document"
+        app-name="vote-up"
+        path="[[editableTopicId]]"
+        data="{{editableTopic}}">
+    </firebase-document>
+    <firebase-query
+        id="query"
+        app-name="vote-up"
+        path="/topics/[[user.uid]]"
+        data="{{topics}}">
+    </firebase-query>
+    <app-indexeddb-mirror
+        session="[[user.uid]]"
+        key="topics"
+        data="{{topics}}"
+        persisted-data="{{persistedTopics}}">
+    </app-indexeddb-mirror>
+
+    <div class="topics">
+      <template is="dom-repeat" items="[[persistedTopics]]" as="topic">
+        <vu-topic
+            id$="[[topic.$key]]"
+            title="[[topic.title]]"
+            description="[[topic.description]]"
+            tags="[[topic.tags]]"
+            on-tap="edit">
+        </vu-topic>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'vote-up-app',
+      behaviors: [Polymer.VoteUpAppBehavior],
+
+      /**
+       * Sign the user in
+       */
+      signIn: function() {
+        this.$.auth.signInWithPopup();
+      },
+
+      get topicsPath() {
+        return '/topics/' + this.user.uid;
+      },
+
+      toEditableId: function(topicId) {
+        return this.topicsPath + '/' + topicId;
+      },
+
+      toEditableId: function(topicId) {
+        return this.topicsPath + '/' + topicId;
+      },
+
+      get isEditable() {
+        return this.online;
+      }
+    });
+  </script>
+</dom-module>

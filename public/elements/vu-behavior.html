@@ -1,0 +1,98 @@
+<link rel="import" href="/bower_components/app-storage/app-network-status-behavior.html">
+<script>
+  (() => {
+    'use strict';
+
+    Polymer.VoteUpAppBehaviorImpl = {
+      properties: {
+        editableTopicId: {
+          type: String,
+          notify: true
+        }
+      },
+
+      get topicsPath() {
+        return '';
+      },
+
+      get isEditable() {
+        return true;
+      },
+
+      toEditableId(topicId) {
+        return topicId;
+      },
+
+      edit(event) {
+        if (this.isEditable) {
+          let topicElement = Polymer.dom(event).localTarget;
+          this.editableTopicId = this.toEditableId(topicElement.id);
+
+          this.$.document.transactionsComplete.then(() => {
+            this.$.editor.open(topicElement);
+          });
+        }
+      },
+
+      create() {
+        if (this.isEditable) {
+          this.editableTopicId = null;
+          this.$.editor.open();
+        }
+      },
+
+      commitChange(event) {
+        var changeCommits;
+
+        switch (event.detail) {
+          case 'save':
+            changeCommits = this.save();
+            break;
+          case 'delete':
+            changeCommits = this.delete();
+            break;
+          default:
+            changeCommits = Promise.resolve();
+            break;
+        }
+
+        if (this.$.query && this.$.query.refresh) {
+          changeCommits.then(() => {
+            this.$.query.refresh();
+          });
+        }
+      },
+
+      save() {
+        if (this.$.document.isNew &&
+            (this.editableTopic.title ||
+             this.editableTopic.description)) {
+          return this.$.document.save(this.topicsPath).then(() => {
+            this.$.document.reset();
+          });
+        }
+
+        return Promise.resolve();
+      },
+
+      delete() {
+        if (!this.$.document.isNew) {
+          this.$.document.destroy();
+        }
+
+        return Promise.resolve();
+      },
+
+      signOut() {
+        if (this.$.auth) {
+          this.$.auth.signOut();
+        }
+      }
+    };
+
+    Polymer.VoteUpAppBehavior = [
+      Polymer.AppNetworkStatusBehavior,
+      Polymer.VoteUpAppBehaviorImpl
+    ];
+  })();
+</script>

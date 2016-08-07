@@ -1,0 +1,159 @@
+<link rel="import" href="/bower_components/paper-styles/shadow.html">
+<link rel="import" href="/bower_components/paper-styles/typography.html">
+<dom-module id="vu-topic">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        background-color: #fafafa;
+        color: #212121;
+        padding: 1em;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        border-radius: 2px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      h1 {
+        font-size: 1.15em;
+        margin: 0;
+        white-space: pre-wrap;
+      }
+
+      h1:not(.hidden)+p {
+        margin-top: 1em;
+      }
+
+      p {
+        margin: 0;
+        font-family: 'Roboto Slab', Times New Roman, serif;
+        font-size: 0.9em;
+        white-space: pre-wrap;
+      }
+
+      .titlePlaceholder:after {
+        content: 'Tap to edit title';
+        opacity: 0.5;
+      }
+
+      .descPlaceholder:after {
+        content: 'Tap to edit description';
+        opacity: 0.5;
+      }
+
+      .tagsPlaceholder:after {
+        content: 'Tap to edit tags';
+        opacity: 0.5;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .empty {
+        font-style: italic;
+        color: #737373;
+        line-height: 0;
+        pointer-events: none;
+      }
+    </style>
+    <h1
+        id="title"
+        class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
+        contenteditable$="[[editable]]"></h1>
+    <p
+        id="description"
+        class$="[[emptyClass(description, 'descPlaceholder', editable)]]"
+        contenteditable$="[[editable]]"></p>
+    <p
+        id="tags"
+        class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
+        contenteditable$="[[editable]]"></p>
+  </template>
+  <script>
+    Polymer({
+      is: 'vu-topic',
+
+      properties: {
+        editable: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        title: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+
+        description: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+
+        tags: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+
+        votes: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+
+        lastUpdated: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      listeners: {
+        input: 'onInput'
+      },
+
+      observers: [
+        'updateTextContent(title, description, tags)'
+      ],
+
+      emptyClass(content, placeholderClass, editable) {
+        if (editable) {
+          return !content ? placeholderClass : '';
+        } else {
+          return !content ? 'hidden' : '';
+        }
+      },
+
+      propertiesAreEmpty() {
+        for (var i = 0; i < arguments.length; ++i) {
+          if (arguments[i]) {
+            return false;
+          }
+        }
+        return true;
+      },
+
+      updateTextContent(title, description, tags) {
+        console.log(arguments);
+        this.$.title.textContent = title;
+        this.$.description.textContent = description;
+        this.$.tags.textContent = tags;
+      },
+
+      onInput() {
+        this.async(function() {
+          this.title = this.$.title.innerText;
+          this.description = this.$.description.innerText;
+          this.tags = this.$.tags.innerText;
+        });
+      }
+    })
+  </script>
+</dom-module>
