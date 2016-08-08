@@ -52,6 +52,7 @@
     </app-indexeddb-mirror>
 
     <div class="topics">
+      <h1>Your topics</h1>
       <template is="dom-repeat" items="[[persistedTopics]]" as="topic">
         <vu-topic
             id$="[[topic.$key]]"
@@ -62,11 +63,35 @@
         </vu-topic>
       </template>
     </div>
+    <hr>
+    <div class="topics">
+      <h1>All topics</h1>
+      <template is="dom-repeat" items="{{allTopics}}" as="topic">
+        <vu-topic
+            id$="[[topic.$key]]"
+            title="[[topic.title]]"
+            description="[[topic.description]]"
+            tags="[[topic.tags]]"
+            votes="[[topic.votes]]"
+            on-tap="edit">
+        </vu-topic>
+      </template>
+    </div>
   </template>
   <script>
     Polymer({
       is: 'vote-up-app',
       behaviors: [Polymer.VoteUpAppBehavior],
+
+      properties: {
+        allTopics: {
+          type: Array
+        }
+      },
+
+      ready: function() {
+        this._computeAllTopics();
+      },
 
       /**
        * Sign the user in
@@ -89,6 +114,26 @@
 
       get isEditable() {
         return this.online;
+      },
+
+      _computeAllTopics: function() {
+        var topics = [];
+        var self = this;
+        this.$.document.getStoredValue('/topics').then(function(topicsByUser) {
+          for(userId in topicsByUser) {
+            for(topicId in topicsByUser[userId]) {
+              topics.push({
+                id: topicId,
+                title: topicsByUser[userId][topicId].title,
+                description: topicsByUser[userId][topicId].description,
+                tags: topicsByUser[userId][topicId].tags,
+                votes: topicsByUser[userId][topicId].votes,
+                createdByUser: userId,
+              });
+            }
+          }
+          self.allTopics = topics;
+        });
       }
     });
   </script>
