@@ -47,8 +47,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     </style>
-    <iron-icon icon="bookmark"></iron-icon>
+    <content></content>
     <h1>Vote Up</h1>
+    <iron-icon icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></iron-icon>
     <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
     <iron-icon icon="cloud-off" hidden$="[[online]]"></iron-icon>
     <paper-icon-button
@@ -62,7 +63,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'vu-toolbar',
 
       behaviors: [
-        Polymer.AppNetworkStatusBehavior
+        Polymer.AppNetworkStatusBehavior,
+        Polymer.VoteUpAppBehavior,
       ],
 
       properties: {

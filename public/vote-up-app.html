@@ -5,78 +5,73 @@
 <dom-module id="vote-up-app">
   <template>
     <style include="vote-up-app-shared-styles"></style>
-    <vu-toolbar
-        signed-in="[[signedIn]]"
-        on-sign-out="signOut">
-    </vu-toolbar>
-    <vu-login
-        on-sign-in="signIn"
-        signed-in="[[signedIn]]"
-        disabled="[[!online]]">
-    </vu-login>
-    <firebase-auth
-        id="auth"
-        app-name="vote-up"
-        provider="google"
-        signed-in="{{signedIn}}"
-        user="{{user}}">
-    </firebase-auth>
-    <paper-fab
-        icon="add"
-        on-tap="create"
-        disabled="[[!online]]"
-        aria-label="Add topic">
-    </paper-fab>
-    <vu-editor
-        id="editor"
-        topic="{{editableTopic}}"
-        on-close="commitChange">
-    </vu-editor>
-    <firebase-document
-        id="document"
-        app-name="vote-up"
-        path="[[editableTopicId]]"
-        data="{{editableTopic}}">
-    </firebase-document>
-    <firebase-query
-        id="query"
-        app-name="vote-up"
-        path="/topics/[[user.uid]]"
-        data="{{topics}}">
-    </firebase-query>
-    <app-indexeddb-mirror
-        session="[[user.uid]]"
-        key="topics"
-        data="{{topics}}"
-        persisted-data="{{persistedTopics}}">
-    </app-indexeddb-mirror>
+    <paper-drawer-panel id="drawerPanel">
+      <paper-header-panel drawer>
+        <div>
+          <paper-menu id="pageSelector" selected="allTopics" attr-for-selected="value" on-iron-select="switchPage">
+            <paper-item value="allTopics">Topic Roadmap</paper-item>
+            <paper-item value="myTopics">My Topics</paper-item>
+          </paper-menu>
+        </div>
+      </paper-header-panel>
+      <div main>
+        <vu-toolbar
+          signed-in="[[signedIn]]"
+          on-sign-out="signOut">
+          <vu-editor
+              id="editor"
+              topic="{{editableTopic}}"
+              on-close="commitChange">
+          </vu-editor>
+            <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+        </vu-toolbar>
 
-    <div class="topics">
-      <h1>Your topics</h1>
-      <template is="dom-repeat" items="[[persistedTopics]]" as="topic">
-        <vu-topic
-            id$="[[topic.$key]]"
-            title="[[topic.title]]"
-            description="[[topic.description]]"
-            tags="[[topic.tags]]"
-            on-tap="edit">
-        </vu-topic>
-      </template>
-    </div>
-    <hr>
-    <div class="topics">
-      <h1>All topics</h1>
-      <template is="dom-repeat" items="{{allTopics}}" as="topic">
-        <vu-topic
-            id$="[[topic.$key]]"
-            title="[[topic.title]]"
-            description="[[topic.description]]"
-            tags="[[topic.tags]]"
-            votes="[[topic.votes]]"
-            on-tap="edit">
-        </vu-topic>
-      </template>
-    </div>
+        <vu-login
+            on-sign-in="signIn"
+            signed-in="[[signedIn]]"
+            disabled="[[!online]]">
+        </vu-login>
+        <firebase-auth
+            id="auth"
+            app-name="vote-up"
+            provider="google"
+            signed-in="{{signedIn}}"
+            user="{{user}}">
+        </firebase-auth>
+        <firebase-document
+            id="document"
+            app-name="vote-up"
+            path="[[editableTopicId]]"
+            data="{{editableTopic}}">
+        </firebase-document>
+        <firebase-query
+            id="query"
+            app-name="vote-up"
+            path="/topics/[[user.uid]]"
+            data="{{topics}}">
+        </firebase-query>
+        <app-indexeddb-mirror
+            session="[[user.uid]]"
+            key="topics"
+            data="{{allTopics}}"
+            persisted-data="{{persistedTopics}}">
+        </app-indexeddb-mirror>
+
+        <div class="topics">
+          <h1>{{pageTitle}}</h1>
+          <template is="dom-repeat" items="[[persistedTopics]]" as="topic">
+          <vu-topic
+              id$="[[topic.$key]]"
+              title="[[topic.title]]"
+              description="[[topic.description]]"
+              tags="[[topic.tags]]"
+              votes="[[topic.votes]]"
+              on-tap="edit">
+          </vu-topic>
+          </template>
+        </div>
+      </div>
+    </paper-drawer-panel>
   </template>
   <script>
     Polymer({
@@ -86,11 +81,14 @@
       properties: {
         allTopics: {
           type: Array
+        },
+        pageTitle: {
+          type: String
         }
       },
 
       ready: function() {
-        this._computeAllTopics();
+
       },
 
       /**
@@ -102,10 +100,6 @@
 
       get topicsPath() {
         return '/topics/' + this.user.uid;
-      },
-
-      toEditableId: function(topicId) {
-        return this.topicsPath + '/' + topicId;
       },
 
       toEditableId: function(topicId) {
@@ -132,9 +126,46 @@
               });
             }
           }
+          //console.log(topics);
           self.allTopics = topics;
         });
-      }
+      },
+
+      _computeCurrentUserTopics: function() {
+        var topics = [];
+        var self = this;
+        let userId = "8QQEo3wCb5UnZJKutcoy4lzS9ot2";
+        debugger;
+        this.$.document.getStoredValue('/topics/' + userId).then(function(userTopics) {
+
+        for(topicId in userTopics) {
+          topics.push({
+            id: topicId,
+            title: userTopics[topicId].title,
+            description: userTopics[topicId].description,
+            tags: userTopics[topicId].tags,
+            votes: userTopics[topicId].votes,
+            createdByUser: userId,
+          });
+        }
+
+        //console.log(topics);
+        self.allTopics = topics;
+        });
+      },
+
+      switchPage: function() {
+        // Set page title
+        this.pageTitle = this.$.pageSelector.selectedItem.innerHTML.trim();
+
+        switch (this.$.pageSelector.selected) {
+          case "allTopics": this._computeAllTopics(); break;
+          case "myTopics": this._computeCurrentUserTopics(); break;
+        }
+
+        // Close drawer after page selection
+        this.$.drawerPanel.closeDrawer();
+      },
     });
   </script>
 </dom-module>

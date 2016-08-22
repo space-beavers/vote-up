@@ -106,8 +106,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       open(topicElement) {
         this._setOpened(true);
-        this.__editedTopicElement = topicElement;
+        this.editableTopic = { title: topicElement.title, description: topicElement.description, tags: topicElement.tags, votes: topicElement.votes ? topicElement.votes : 0};
         if (topicElement) {
+          this.topic = { title: topicElement.title, description: topicElement.description, tags: topicElement.tags, votes: topicElement.votes ? topicElement.votes : 0};
           topicElement.style.opacity = 0;
           this.transitionInFrom(topicElement.getBoundingClientRect());
         } else {
