@@ -56,15 +56,14 @@
             break;
         }
 
-        if (this.$.query && this.$.query.refresh) {
+        if (this.$.topicsFromCurrentUserQuery && this.$.topicsFromCurrentUserQuery.refresh) {
           changeCommits.then(() => {
-            this.$.query.refresh();
+            this.$.topicsFromCurrentUserQuery.refresh();
           });
         }
       },
 
       save() {
-        debugger;
         if (this.$.document.isNew &&
             (this.editableTopic.title ||
              this.editableTopic.description)) {

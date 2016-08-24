@@ -49,7 +49,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <content></content>
     <h1>Vote Up</h1>
-    <iron-icon icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></iron-icon>
     <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
     <iron-icon icon="cloud-off" hidden$="[[online]]"></iron-icon>
     <paper-icon-button
@@ -64,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       behaviors: [
         Polymer.AppNetworkStatusBehavior,
-        Polymer.VoteUpAppBehavior,
+        Polymer.VoteUpAppBehavior
       ],
 
       properties: {
