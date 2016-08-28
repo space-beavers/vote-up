@@ -29,7 +29,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       h1 {
         font-size: 14px;
         flex-grow: 1;
-        margin: 9px 0;
+        float: right;
+        margin: 9px 16px 0;
+      }
+
+      .toolbar-right {
+        margin-left: auto;
       }
 
       iron-icon {
@@ -48,14 +53,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <content></content>
-    <h1>Vote Up</h1>
-    <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
-    <iron-icon icon="cloud-off" hidden$="[[online]]"></iron-icon>
-    <paper-icon-button
-        icon="[[computeLockIcon(signedIn)]]"
-        disabled="[[!signedIn]]"
-        on-tap="lock">
-    </paper-icon-button>
+    <div class="toolbar-right">
+      <iron-icon icon="cloud" hidden$="[[!online]]"></iron-icon>
+      <iron-icon icon="cloud-off" hidden$="[[online]]"></iron-icon>
+      <paper-icon-button
+          icon="[[computeLockIcon(signedIn)]]"
+          disabled="[[!signedIn]]"
+          on-tap="lock">
+      </paper-icon-button>
+      <h1>Vote Up</h1>
+    </div>
   </template>
   <script>
     Polymer({

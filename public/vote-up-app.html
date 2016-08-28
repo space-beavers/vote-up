@@ -26,6 +26,19 @@
           </vu-editor>
 
           <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+
+          <paper-dropdown-menu id="spaceDropdown" on-iron-select="_spaceDropdownObserver" label="Spaces">
+            <paper-listbox class="dropdown-content" selected="0">
+              <template is="dom-repeat" items="[[spaces]]" as="space">
+                <paper-item id$="[[space.$key]]">
+                  <vu-space
+                      id$="[[space.$key]]"
+                      name="[[space.name]]">
+                  </vu-space>
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
         </vu-toolbar>
 
         <vu-login
@@ -69,19 +82,6 @@
             data="{{allTopics}}"
             persisted-data="{{persistedTopics}}">
         </app-indexeddb-mirror> -->
-
-        <paper-dropdown-menu id="spaceDropdown" on-iron-select="_spaceDropdownObserver" label="Spaces">
-          <paper-listbox class="dropdown-content" selected="0">
-            <template is="dom-repeat" items="[[spaces]]" as="space">
-              <paper-item id$="[[space.$key]]">
-                <vu-space
-                    id$="[[space.$key]]"
-                    name="[[space.name]]">
-                </vu-space>
-              </paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
 
         <div class="topics">
           <h1>{{pageTitle}}</h1>
