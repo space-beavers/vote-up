@@ -181,10 +181,7 @@
           topics = this.firebaseObjectToArray(this.currentSpace.topics);
 
           // if currenUserfilter
-          if (this.$.pageSelector.selected === "myTopics") {
-            console.log(topics); this.topics = this._getCurrentUserTopics(topics);
-          }
-          else this.topics = topics;
+          this.topics = (this.$.pageSelector.selected === "myTopics") ? this._getCurrentUserTopics(topics) : topics;
         }
       },
 
