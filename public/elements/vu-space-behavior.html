@@ -1,9 +1,9 @@
 <link rel="import" href="../bower_components/app-storage/app-network-status-behavior.html">
 <script>
-  (() => {
-    'use strict';
+    var MyBehaviors = MyBehaviors || {};
 
-    Polymer.VoteUpSpaceBehaviorImpl = {
+    var VoteUpSpaceBehaviorImpl = {
+
       properties: {
         editableSpaceId: {
           type: String,
@@ -84,9 +84,8 @@
       }
     };
 
-    Polymer.VoteUpSpaceBehavior = [
+    MyBehaviors.VoteUpSpaceBehavior = [
       Polymer.AppNetworkStatusBehavior,
-      Polymer.VoteUpSpaceBehaviorImpl
+      VoteUpSpaceBehaviorImpl
     ];
-  })();
 </script>

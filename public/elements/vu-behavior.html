@@ -1,10 +1,15 @@
 <link rel="import" href="../bower_components/app-storage/app-network-status-behavior.html">
 <script>
-  (() => {
-    'use strict';
 
-    Polymer.VoteUpAppBehaviorImpl = {
+  var MyBehaviors = MyBehaviors || {};
+
+  var VoteUpAppBehaviorImpl = {
       properties: {
+        user: {
+          type: Object,
+          observer: "useridObserver"
+        },
+
         editableTopicId: {
           type: String,
           notify: true
@@ -19,8 +24,16 @@
         return true;
       },
 
+      get user() {
+        return this.user;
+      },
+
       toEditableId(topicId) {
         return topicId;
+      },
+
+      useridObserver: function (newValue, oldValue){
+          console.log("yo"+newValue);
       },
 
       edit(event) {
@@ -94,9 +107,8 @@
       }
     };
 
-    Polymer.VoteUpAppBehavior = [
+    MyBehaviors.VoteUpAppBehavior = [
       Polymer.AppNetworkStatusBehavior,
-      Polymer.VoteUpAppBehaviorImpl
+      VoteUpAppBehaviorImpl
     ];
-  })();
 </script>

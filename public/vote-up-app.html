@@ -105,8 +105,8 @@
     Polymer({
       is: 'vote-up-app',
       behaviors: [
-        Polymer.VoteUpAppBehavior,
-        Polymer.VoteUpSpaceBehavior
+        MyBehaviors.VoteUpAppBehavior,
+        MyBehaviors.VoteUpSpaceBehavior
       ],
 
       properties: {
@@ -124,17 +124,12 @@
         },
 
         topics: {
-          type: Array,
-          observer: "topicsobserver"
+          type: Array
         },
 
         pageTitle: {
           type: String
         }
-      },
-
-      topicsobserver: function (newValue, oldValue){
-          console.log(newValue);
       },
 
       ready: function() {
