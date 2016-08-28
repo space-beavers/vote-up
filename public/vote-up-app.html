@@ -70,14 +70,14 @@
             persisted-data="{{persistedTopics}}">
         </app-indexeddb-mirror> -->
 
-        <paper-dropdown-menu id="spaceDropdown" selected="lsdfjksdf98749" on-iron-select="_spaceDropdownObserver" attr-for-selected="id" label="Spaces">
-          <paper-listbox class="dropdown-content">
+        <paper-dropdown-menu id="spaceDropdown" on-iron-select="_spaceDropdownObserver" label="Spaces">
+          <paper-listbox class="dropdown-content" selected="0">
             <template is="dom-repeat" items="[[spaces]]" as="space">
               <paper-item id$="[[space.$key]]">
-              <vu-space
-                  id$="[[space.$key]]"
-                  name="[[space.name]]">
-              </vu-space>
+                <vu-space
+                    id$="[[space.$key]]"
+                    name="[[space.name]]">
+                </vu-space>
               </paper-item>
             </template>
           </paper-listbox>
@@ -111,8 +111,7 @@
 
       properties: {
         currentSpaceId: {
-          type: String,
-          observer: "_currentSpaceIdObserver"
+          type: String
         },
 
         currentSpace: {
@@ -125,22 +124,17 @@
         },
 
         topics: {
-          type: Array
-        },
-
-        allTopics: {
           type: Array,
-          observer: '_computeAllTopics'
-        },
-
-        currentUserTopics: {
-          type: Array,
-          observer: '_computeCurrentUserTopics'
+          observer: "topicsobserver"
         },
 
         pageTitle: {
           type: String
         }
+      },
+
+      topicsobserver: function (newValue, oldValue){
+          console.log(newValue);
       },
 
       ready: function() {
@@ -166,29 +160,32 @@
         return this.online;
       },
 
-      _computeAllTopics: function() {
-        //console.log(this.currentSpace);
-        //this.topics = Object.keys(this.currentSpace.topics).map(key => { return this.currentSpace.topics[key]});
+      _getCurrentUserTopics: function(currentSpaceTopicsArray) {
+        let currentUserTopics = [];
+
+        // Select only topics with createdBy attr == user.id
+        this.firebaseObjectToArray(this.currentSpace.topics).map(
+          topic => { if (topic.createdBy === this.user.uid) currentUserTopics.push(topic); });
+
+        return currentUserTopics;
       },
 
-      _computeCurrentUserTopics: function() {
-        this.topics = this.currentUserTopics;
-      },
-
+      // spaceDropdown value observer
       _spaceDropdownObserver: function () {
-
         this.currentSpaceId = this.$.spaceDropdown.selectedItem.id;
-        this.allTopics = this.spaces[0].topics;
-        // /console.log(this.spaces);
-      },
-
-      _currentSpaceIdObserver: function (newValue, oldValue) {
-        console.log(newValue);
       },
 
       _currentSpaceObjectObserver: function (newValue, oldValue) {
-        if (this.currentSpace.topics)
-          this.topics = Object.keys(this.currentSpace.topics).map(key => { return this.currentSpace.topics[key]});
+        let topics;
+        if (this.currentSpace.topics) {
+          topics = this.firebaseObjectToArray(this.currentSpace.topics);
+
+          // if currenUserfilter
+          if (this.$.pageSelector.selected === "myTopics") {
+            console.log(topics); this.topics = this._getCurrentUserTopics(topics);
+          }
+          else this.topics = topics;
+        }
       },
 
       switchPage: function() {
@@ -196,8 +193,8 @@
         this.pageTitle = this.$.pageSelector.selectedItem.innerHTML.trim();
 
         switch (this.$.pageSelector.selected) {
-          case "allTopics": this._computeAllTopics(); break;
-          case "myTopics": this._computeCurrentUserTopics(); break;
+          case "allTopics": this._currentSpaceObjectObserver(); break;
+          case "myTopics": this.topics = this._getCurrentUserTopics(this.currentSpace.topics); break;
         }
 
         // Close drawer after page selection

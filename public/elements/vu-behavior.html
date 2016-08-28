@@ -87,6 +87,10 @@
         if (this.$.auth) {
           this.$.auth.signOut();
         }
+      },
+
+      firebaseObjectToArray (object) {
+        return Object.keys(object).map(key => { return object[key]});
       }
     };
 
