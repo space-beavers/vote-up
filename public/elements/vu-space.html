@@ -1,0 +1,28 @@
+<dom-module id="vu-space">
+  <template>
+    <span>Space: {{name}}</span>
+  </template>
+  <script>
+    Polymer({
+      is: 'vu-space',
+
+      behaviors: [
+        "VoteUpSpaceBehavior"
+      ],
+
+      properties: {
+        name: {
+          type: String
+        },
+
+        topicsVote: {
+          type: Array
+        },
+
+        topics: {
+          type: Array
+        }
+      }
+    })
+  </script>
+</dom-module>

@@ -33,6 +33,7 @@
             signed-in="[[signedIn]]"
             disabled="[[!online]]">
         </vu-login>
+
         <firebase-auth
             id="auth"
             app-name="vote-up"
@@ -40,6 +41,7 @@
             signed-in="{{signedIn}}"
             user="{{user}}">
         </firebase-auth>
+
         <firebase-document
             id="document"
             app-name="vote-up"
@@ -47,18 +49,18 @@
             data="{{editableTopic}}">
         </firebase-document>
 
-        <firebase-query
-            id="allTopicsQuery"
+        <firebase-document
+            id="currentSpace"
             app-name="vote-up"
-            path="/topics"
-            data="{{allTopics}}">
-        </firebase-query>
+            path="/spaces/{{currentSpaceId}}"
+            data="{{currentSpace}}">
+        </firebase-document>
 
         <firebase-query
-            id="topicsFromCurrentUserQuery"
+            id="spacesQuery"
             app-name="vote-up"
-            path="/topics/[[user.uid]]"
-            data="{{currentUserTopics}}">
+            path="/spaces"
+            data="{{spaces}}">
         </firebase-query>
 
         <!-- <app-indexeddb-mirror
@@ -67,6 +69,19 @@
             data="{{allTopics}}"
             persisted-data="{{persistedTopics}}">
         </app-indexeddb-mirror> -->
+
+        <paper-dropdown-menu id="spaceDropdown" selected="lsdfjksdf98749" on-iron-select="_spaceDropdownObserver" attr-for-selected="id" label="Spaces">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[spaces]]" as="space">
+              <paper-item id$="[[space.$key]]">
+              <vu-space
+                  id$="[[space.$key]]"
+                  name="[[space.name]]">
+              </vu-space>
+              </paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
 
         <div class="topics">
           <h1>{{pageTitle}}</h1>
@@ -89,9 +104,26 @@
   <script>
     Polymer({
       is: 'vote-up-app',
-      behaviors: [Polymer.VoteUpAppBehavior],
+      behaviors: [
+        Polymer.VoteUpAppBehavior,
+        Polymer.VoteUpSpaceBehavior
+      ],
 
       properties: {
+        currentSpaceId: {
+          type: String,
+          observer: "_currentSpaceIdObserver"
+        },
+
+        currentSpace: {
+          type: Object,
+          observer: "_currentSpaceObjectObserver"
+        },
+
+        spaces: {
+          type: Array
+        },
+
         topics: {
           type: Array
         },
@@ -101,13 +133,18 @@
           observer: '_computeAllTopics'
         },
 
+        currentUserTopics: {
+          type: Array,
+          observer: '_computeCurrentUserTopics'
+        },
+
         pageTitle: {
           type: String
         }
       },
 
       ready: function() {
-        this.$.document.getStoredValue('/topics').then(topics => this.allTopics = topics);
+        //this.$.document.getStoredValue('/topics').then(topics => this.allTopics = topics);
       },
 
       /**
@@ -130,21 +167,28 @@
       },
 
       _computeAllTopics: function() {
-        let allTopics = [];
-
-        for(userId in this.allTopics) {
-          let userTopics = this.allTopics[userId];
-
-          allTopics = allTopics.concat(
-              Object.keys(userTopics).map(key => { if(key != "$key") return userTopics[key]})
-            );
-        }
-
-        this.topics = allTopics;
+        //console.log(this.currentSpace);
+        //this.topics = Object.keys(this.currentSpace.topics).map(key => { return this.currentSpace.topics[key]});
       },
 
       _computeCurrentUserTopics: function() {
         this.topics = this.currentUserTopics;
+      },
+
+      _spaceDropdownObserver: function () {
+
+        this.currentSpaceId = this.$.spaceDropdown.selectedItem.id;
+        this.allTopics = this.spaces[0].topics;
+        // /console.log(this.spaces);
+      },
+
+      _currentSpaceIdObserver: function (newValue, oldValue) {
+        console.log(newValue);
+      },
+
+      _currentSpaceObjectObserver: function (newValue, oldValue) {
+        if (this.currentSpace.topics)
+          this.topics = Object.keys(this.currentSpace.topics).map(key => { return this.currentSpace.topics[key]});
       },
 
       switchPage: function() {
