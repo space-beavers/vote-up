@@ -68,12 +68,6 @@
             changeCommits = Promise.resolve();
             break;
         }
-
-        if (this.$.topicsFromCurrentUserQuery && this.$.topicsFromCurrentUserQuery.refresh) {
-          changeCommits.then(() => {
-            this.$.topicsFromCurrentUserQuery.refresh();
-          });
-        }
       },
 
       save() {
