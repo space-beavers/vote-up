@@ -120,9 +120,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      create() {        debugger;
+      create() {
         this._setOpened(true);
-        this.topic = { title: '', description: '', tags: '', votes: 0, createdBy: this.user().uuid };
+        this.topic = { title: '', description: '', tags: '', votes: 0, createdBy: "" };
         this.transitionInFrom(this.getBoundingClientRect());
       },
 
@@ -135,7 +135,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       close(detail) {
-        debugger;
         if (this.__editedTopicElement) {
           this.__editedTopicElement.style.opacity = 1;
           this.__editedTopicElement = null;

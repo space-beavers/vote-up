@@ -105,8 +105,7 @@
     Polymer({
       is: 'vote-up-app',
       behaviors: [
-        MyBehaviors.VoteUpAppBehavior,
-        MyBehaviors.VoteUpSpaceBehavior
+        MyBehaviors.VoteUpAppBehavior
       ],
 
       properties: {
@@ -144,7 +143,7 @@
       },
 
       get topicsPath() {
-        return '/topics/' + this.user.uid;
+        return '/spaces/'+ this.currentSpaceId +'/topics/';
       },
 
       toEditableId: function(topicId) {

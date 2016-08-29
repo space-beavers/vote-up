@@ -5,9 +5,9 @@
 
   var VoteUpAppBehaviorImpl = {
       properties: {
-        user: {
-          type: Object,
-          observer: "useridObserver"
+        userUuid: {
+          type: String,
+          observer: "userUuidObserver"
         },
 
         editableTopicId: {
@@ -25,14 +25,14 @@
       },
 
       get user() {
-        return this.user;
+        return this.userUuid;
       },
 
       toEditableId(topicId) {
         return topicId;
       },
 
-      useridObserver: function (newValue, oldValue){
+      userUuidObserver: function (newValue, oldValue){
           console.log("yo"+newValue);
       },
 
@@ -80,6 +80,7 @@
         if (this.$.document.isNew &&
             (this.editableTopic.title ||
              this.editableTopic.description)) {
+          this.editableTopic.createdBy = this.user.uid;
           return this.$.document.save(this.topicsPath).then(() => {
             this.$.document.reset();
           });
