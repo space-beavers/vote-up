@@ -27,7 +27,7 @@
               on-close="commitChange">
           </vu-editor>
 
-          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <!--<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>-->
 
           <paper-dropdown-menu id="spaceDropdown" on-iron-select="_spaceDropdownObserver" label="Spaces">
             <paper-listbox class="dropdown-content" selected="0">
@@ -46,6 +46,7 @@
         <paper-tabs id="pageSelector" selected="allTopics" attr-for-selected="value" on-iron-select="switchPage">
           <paper-tab value="allTopics">Topic Roadmap</paper-tab>
           <paper-tab value="myTopics">My Topics</paper-tab>
+          <paper-tab value="history">History</paper-tab>
         </paper-tabs>
 
         <vu-login
@@ -194,10 +195,7 @@
           case "allTopics": this._currentSpaceObjectObserver(); break;
           case "myTopics": this.topics = this._getCurrentUserTopics(this.currentSpace.topics); break;
         }
-
-        // Close drawer after page selection
-        this.$.drawerPanel.closeDrawer();
-      },
+      }
     });
   </script>
 </dom-module>
