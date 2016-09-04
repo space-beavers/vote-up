@@ -5,15 +5,17 @@
 <dom-module id="vote-up-app">
   <template>
     <style include="vote-up-app-shared-styles"></style>
-    <paper-drawer-panel id="drawerPanel">
-      <paper-header-panel drawer>
-        <div>
-          <paper-menu id="pageSelector" selected="allTopics" attr-for-selected="value" on-iron-select="switchPage">
-            <paper-item value="allTopics">Topic Roadmap</paper-item>
-            <paper-item value="myTopics">My Topics</paper-item>
-          </paper-menu>
-        </div>
-      </paper-header-panel>
+
+    <!--<paper-drawer-panel id="drawerPanel">-->
+      <!--<paper-header-panel drawer>-->
+        <!--<div>-->
+          <!--<paper-menu id="pageSelector" selected="allTopics" attr-for-selected="value" on-iron-select="switchPage">-->
+            <!--<paper-item value="allTopics">Topic Roadmap</paper-item>-->
+            <!--<paper-item value="myTopics">My Topics</paper-item>-->
+          <!--</paper-menu>-->
+        <!--</div>-->
+      <!--</paper-header-panel>-->
+
       <div main>
         <vu-toolbar
           signed-in="[[signedIn]]"
@@ -40,6 +42,11 @@
             </paper-listbox>
           </paper-dropdown-menu>
         </vu-toolbar>
+
+        <paper-tabs id="pageSelector" selected="allTopics" attr-for-selected="value" on-iron-select="switchPage">
+          <paper-tab value="allTopics">Topic Roadmap</paper-tab>
+          <paper-tab value="myTopics">My Topics</paper-tab>
+        </paper-tabs>
 
         <vu-login
             on-sign-in="signIn"
@@ -99,7 +106,7 @@
 
         <paper-fab icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></paper-fab>
       </div>
-    </paper-drawer-panel>
+    <!--</paper-drawer-panel>-->
   </template>
   <script>
     Polymer({
@@ -181,7 +188,7 @@
 
       switchPage: function() {
         // Set page title
-        this.pageTitle = this.$.pageSelector.selectedItem.innerHTML.trim();
+//        this.pageTitle = this.$.pageSelector.selectedItem.innerHTML.trim();
 
         switch (this.$.pageSelector.selected) {
           case "allTopics": this._currentSpaceObjectObserver(); break;
