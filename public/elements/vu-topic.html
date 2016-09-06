@@ -112,6 +112,10 @@
           value: ''
         },
 
+        currentSpace: {
+          type: Object
+        },
+
         tags: {
           type: Array,
           notify: true,
@@ -146,7 +150,7 @@
 
       observers: [
         'updateTextContent(title, description, tags)',
-        'setHasCurrentUserVoted(currentUserId, votes)'
+        'setHasCurrentUserVoted(currentUserId, votes, currentSpace)'
       ],
 
       emptyClass(content, placeholderClass, editable) {
@@ -191,6 +195,9 @@
           value: 1
         };
 
+        // If first vote on space
+        if (!this.votes) this.votes = {};
+
         // If first vote on topic, initialize a key with topic id
         if (!this.votes[this.id]) this.votes[this.id] = [];
 
@@ -211,7 +218,9 @@
         this.notifyPath('votes.' + this.id);
       },
 
-      setHasCurrentUserVoted: function(currentUserId, votes){
+      setHasCurrentUserVoted: function(currentUserId, votes, currentSpace){
+        this.hasCurrentUserVoted = 0;
+
         if (votes && votes[this.id]) {
           let self = this;
 
