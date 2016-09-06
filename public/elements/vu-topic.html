@@ -61,11 +61,14 @@
         pointer-events: none;
       }
     </style>
+
     <!-- TODO: make edit/view version of a topic-card -->
     <h1
         id="title"
         class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
         contenteditable$="[[editable]]"></h1>
+        <p
+        id="id">{{id}}</p>
     <p
         id="description"
         class$="[[emptyClass(description, 'descPlaceholder', editable)]]"
@@ -74,7 +77,9 @@
         id="tags"
         class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
         contenteditable$="[[editable]]"></p>
-    <span>Votes: {{votes}}</span>
+    <span>Votes:</span>
+
+    <cw-vote value="{{_voteCount(votes)}}" user-value="{{hasCurrentUserVoted}}"></cw-vote>
 
   </template>
   <script>
@@ -83,6 +88,11 @@
 
       properties: {
         createdBy: String,
+
+        id: {
+          type: String,
+          value: 'none'
+        },
 
         editable: {
           type: Boolean,
@@ -109,23 +119,34 @@
         },
 
         votes: {
-          type: Number,
-          notify: true,
-          value: 0
+          type: Object,
+          notify: true
         },
 
         lastUpdated: {
+          type: Number,
+          value: 0
+        },
+
+        currentUserId: {
+          type: String
+        },
+
+        hasCurrentUserVoted: {
           type: Number,
           value: 0
         }
       },
 
       listeners: {
-        input: 'onInput'
+        input: 'onInput',
+        'cw-vote-up': 'onVoteUp',
+        'cw-vote-cancel': 'onVoteCancel'
       },
 
       observers: [
-        'updateTextContent(title, description, tags)'
+        'updateTextContent(title, description, tags)',
+        'setHasCurrentUserVoted(currentUserId, votes)'
       ],
 
       emptyClass(content, placeholderClass, editable) {
@@ -151,12 +172,55 @@
         this.$.tags.textContent = tags;
       },
 
+      _voteCount: function (votes){
+        return (votes && votes[this.id]) ? votes[this.id].length : 0;
+      },
+
       onInput() {
         this.async(function() {
           this.title = this.$.title.innerText;
           this.description = this.$.description.innerText;
           this.tags = this.$.tags.innerText;
         });
+      },
+
+      onVoteUp: function() {
+        let vote = {
+          createdBy: this.currentUserId,
+          createdTime: new Date(),
+          value: 1
+        };
+
+        // If first vote on topic, initialize a key with topic id
+        if (!this.votes[this.id]) this.votes[this.id] = [];
+
+        this.votes[this.id].push(vote);
+        this.notifyPath('votes.' + this.id);
+      },
+
+      onVoteCancel: function() {
+        let voteToCancelIndex;
+
+        for (let i = 0; i < this.votes[this.id].length; i++) {
+          if(this.votes[this.id][i].createdBy === this.currentUserId){
+            let voteToCancelIndex = i;
+          }
+        }
+
+        this.votes[this.id].splice(voteToCancelIndex,1);
+        this.notifyPath('votes.' + this.id);
+      },
+
+      setHasCurrentUserVoted: function(currentUserId, votes){
+        if (votes && votes[this.id]) {
+          let self = this;
+
+          votes[this.id].map(function(vote){
+            if(vote.createdBy === currentUserId){
+              self.hasCurrentUserVoted = 1;
+            }
+          });
+        }
       }
     })
   </script>

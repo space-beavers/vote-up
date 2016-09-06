@@ -94,11 +94,12 @@
           <h1>{{pageTitle}}</h1>
           <template is="dom-repeat" items="[[topics]]" as="topic">
           <vu-topic
-              id$="[[topic.$key]]"
-              title="[[topic.title]]"
-              description="[[topic.description]]"
-              tags="[[topic.tags]]"
-              votes="[[topic.votes]]"
+              id="[[topic.name]]"
+              title="[[topic.value.title]]"
+              description="[[topic.value.description]]"
+              tags="[[topic.value.tags]]"
+              votes="{{currentSpace.topicVotes}}"
+              current-user-id="[[user.uid]]"
               on-tap="edit">
           </vu-topic>
           </template>
@@ -187,16 +188,10 @@
       },
 
       switchPage: function() {
-        // Set page title
-//        this.pageTitle = this.$.pageSelector.selectedItem.innerHTML.trim();
-
         switch (this.$.pageSelector.selected) {
           case "allTopics": this._currentSpaceObjectObserver(); break;
           case "myTopics": this.topics = this._getCurrentUserTopics(this.currentSpace.topics); break;
         }
-
-        // Close drawer after page selection
-        this.$.drawerPanel.closeDrawer();
       },
     });
   </script>
