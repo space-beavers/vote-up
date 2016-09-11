@@ -1,5 +1,9 @@
 <link rel="import" href="../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-tags/paper-tags.html">
+<link rel="import" href="../bower_components/paper-tags/paper-tags-input.html">
+
 <dom-module id="vu-topic">
   <template>
     <style>
@@ -11,21 +15,32 @@
         padding: 1em;
         @apply(--paper-font-common-base);
         @apply(--shadow-elevation-2dp);
+        @apply(--layout-vertical);
         border-radius: 2px;
+        width: 250px;
+        position: relative;
+
+        --paper-tag-item: {
+          border: 0;
+          background-color: #eeeeee;
+          border-radius: 16px;
+          color: #757575;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          padding: 4px 8px;
+          font-family: 'Roboto', 'Noto', sans-serif;
+          text-align: center;
+        };
       }
 
-      .hidden {
-        display: none;
-      }
-
-      h1 {
-        font-size: 1.15em;
+      h3 {
+        font-size: 1rem;
         margin: 0;
-        white-space: pre-wrap;
       }
 
-      h1:not(.hidden)+p {
-        margin-top: 1em;
+      :host[editable] .topic-footer {
+        display: none;
       }
 
       p {
@@ -60,33 +75,128 @@
         line-height: 0;
         pointer-events: none;
       }
-    </style>
-    <!-- TODO: make edit/view version of a topic-card -->
-    <h1
-        id="title"
-        class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></h1>
-    <p
-        id="description"
-        class$="[[emptyClass(description, 'descPlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></p>
-    <p
-        id="tags"
-        class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></p>
-    <span>Votes: {{votes}}</span>
 
+      .topic-head,
+      .topic-footer {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .topic-head {
+        margin-bottom: 16px;
+      }
+
+      .topic-body {
+        @apply(--layout-flex);
+      }
+
+      .topic-title {
+        flex: 0 0 auto;
+        max-width: 125px;
+        word-break: break-word;
+      }
+
+      .topic-head .topic-title {
+        @apply(--layout-flex);
+      }
+
+      .vote-count {
+        color: #666;
+        font-size: .9rem;
+      }
+
+      .user-initials,
+      .vote-button {
+        background: #666;
+        border-radius:30px;
+        color: #fff;
+        font-size: 1rem;
+        height: 20px;
+        padding: 8px;
+        text-transform: uppercase;
+        width: 20px;
+        margin-right: 16px;
+      }
+
+      .tags {
+        color: #555;
+        font-size: .9rem;
+      }
+
+      :host[voted] .vote-button {
+        background: #2196f3;
+      }
+
+      .title,
+      .tags,
+      .description {
+        outline: 0px solid transparent;
+      }
+      paper-tags-input {
+        margin: 0 0 8px 0;
+      }
+      paper-input, paper-tags, #description {
+        margin: 0 0 12px 0;
+      }
+      paper-icon-button:hover {
+        border-radius: 50%;
+        background: #eeeeee;
+        transition: .2s background ease-in-out;
+      }
+      paper-icon-button {
+        --paper-icon-button-hover: green;
+        --paper-icon-button: green;
+      }
+    </style>
+
+    <!-- TODO: make edit/view version of a topic-card -->
+    <div class="topic-head">
+      <div class="user-initials">VU</div>
+      <div class="topic-title">
+        <h3
+          id="title"
+          class$="title [[emptyClass(title, 'titlePlaceholder', editable)]]"
+          contenteditable$="[[editable]]"></h3>
+      </div>
+      <paper-icon-button hidden$="[[!isEditable]]" icon="editor:mode-edit"></paper-icon-button>
+    </div>
+    <div class="topic-body">
+        <div class="tags">
+          <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
+        </div>
+         <paper-tags-input label="Tags" hidden$="[[!editable]]" show-counter="tags" items="{{tags}}" maxlength="10"></paper-tags-input>
+        <p
+        id="description"
+        class$="description [[emptyClass(description, 'descPlaceholder', editable)]]"
+        contenteditable$="[[editable]]"></p>
+    </div>
+
+    <div class="topic-footer">
+      <div class="vote-button" on-tap="voteToggle">
+        +1
+      </div>
+      <span class="vote-count">{{voteCount}} upvoted this topic</span>
+    </div>
   </template>
   <script>
     Polymer({
       is: 'vu-topic',
 
       properties: {
-        createdBy: String,
+
+        id: {
+          type: String,
+          value: 'none'
+        },
 
         editable: {
           type: Boolean,
           reflectToAttribute: true,
+          value: false
+        },
+
+        isEditable: {
+          type: Boolean,
           value: false
         },
 
@@ -102,19 +212,41 @@
           value: ''
         },
 
+        currentSpace: {
+          type: Object
+        },
+
         tags: {
           type: Array,
           notify: true,
           value: []
         },
 
-        votes: {
+        voted: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        voteCount: {
           type: Number,
-          notify: true,
           value: 0
         },
 
         lastUpdated: {
+          type: Number,
+          value: 0
+        },
+
+        currentUserId: {
+          type: String
+        },
+
+        createdBy: {
+          type: String
+        },
+
+        hasCurrentUserVoted: {
           type: Number,
           value: 0
         }
@@ -125,8 +257,15 @@
       },
 
       observers: [
-        'updateTextContent(title, description, tags)'
+        'updateTextContent(title, description, tags)',
+        'computeCreatedByCurrentUser(createdBy, currentUserId)',
+        'tagsChanged(tags)'
       ],
+
+      tagsChanged: function(newValue, oldValue){
+        if(typeof newValue ===  'undefined')
+        this.tags = [];
+      },
 
       emptyClass(content, placeholderClass, editable) {
         if (editable) {
@@ -148,15 +287,33 @@
       updateTextContent(title, description, tags) {
         this.$.title.textContent = title;
         this.$.description.textContent = description;
-        this.$.tags.textContent = tags;
+        this.$.tags.items = tags;
+      },
+
+      setVoteCount: function (votes){
+        this.voteCount = (votes && votes[this.id]) ? votes[this.id].length : 0;
       },
 
       onInput() {
         this.async(function() {
           this.title = this.$.title.innerText;
           this.description = this.$.description.innerText;
-          this.tags = this.$.tags.innerText;
+          //this.tags = this.$.tags.innerText;
         });
+      },
+
+      computeCreatedByCurrentUser: function(createdBy, currentUserId){
+        this.isEditable = (createdBy === currentUserId);
+      },
+
+      voteToggle(ev) {
+        ev.stopPropagation();
+
+        if(this.voted) {
+          this.fire('topic-vote-cancel');
+        } else {
+          this.fire('topic-vote-up');
+        }
       }
     })
   </script>

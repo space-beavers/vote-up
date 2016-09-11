@@ -17,7 +17,7 @@
       },
 
       get topicsPath() {
-        return '';
+        return 'spaces/' + this.currentSpaceId + '/topics/';
       },
 
       get isEditable() {
@@ -37,7 +37,7 @@
       },
 
       edit(event) {
-        if (this.isEditable) {
+        if (event.currentTarget.isEditable) {
           let topicElement = Polymer.dom(event).localTarget;
           this.editableTopicId = this.toEditableId(topicElement.id);
 
@@ -98,7 +98,12 @@
       },
 
       firebaseObjectToArray (object) {
-        return Object.keys(object).map(key => { return object[key]});
+        return Object.keys(object).map(
+          key => {
+            return {
+              name: key,
+              value: object[key]
+            }});
       }
     };
 
