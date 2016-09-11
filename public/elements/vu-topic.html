@@ -9,14 +9,7 @@
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
-        background-color: #fafafa;
-        color: #212121;
-        padding: 1em;
-        @apply(--paper-font-common-base);
-        @apply(--shadow-elevation-2dp);
         @apply(--layout-vertical);
-        border-radius: 2px;
         width: 250px;
         position: relative;
 
@@ -32,6 +25,14 @@
           font-family: 'Roboto', 'Noto', sans-serif;
           text-align: center;
         };
+      }
+
+      paper-card {
+        padding: 1em;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        @apply(--layout-vertical);
+        max-width: 850px;
       }
 
       h3 {
@@ -149,7 +150,18 @@
       }
     </style>
 
+    <!-- <paper-card heading="Emmental" image="http://placehold.it/350x150/FFC107/000000" alt="Emmental">
+    <div class="card-content">
+    Emmentaler or Emmental is a yellow, medium-hard cheese that originated in the area around Emmental, Switzerland. It is one of the cheeses of Switzerland, and is sometimes known as Swiss cheese.
+    </div>
+    <div class="card-actions">
+    <paper-button>Share</paper-button>
+    <paper-button>Explore!</paper-button>
+    </div>
+    </paper-card> -->
+
     <!-- TODO: make edit/view version of a topic-card -->
+    <paper-card>
     <div class="topic-head">
       <div class="user-initials">VU</div>
       <div class="topic-title">
@@ -161,6 +173,8 @@
       <paper-icon-button hidden$="[[!isEditable]]" icon="editor:mode-edit"></paper-icon-button>
     </div>
     <div class="topic-body">
+      <iron-image style="width:250px; height:150px; margin-left: -16px; background-color: lightgray;"
+  sizing="cover" preload fade src="http://lorempixel.com/600/400"></iron-image>
         <div class="tags">
           <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
         </div>
@@ -177,6 +191,7 @@
       </div>
       <span class="vote-count">{{voteCount}} upvoted this topic</span>
     </div>
+    </paper-card>
   </template>
   <script>
     Polymer({
