@@ -79,7 +79,7 @@
         contenteditable$="[[editable]]"></p>
     <span>Votes:</span>
 
-    <cw-vote value="{{_voteCount(votes)}}" user-value="{{hasCurrentUserVoted}}"></cw-vote>
+    <cw-vote value="{{voteCount}}" user-value="{{voted}}"></cw-vote>
 
   </template>
   <script>
@@ -122,9 +122,14 @@
           value: []
         },
 
-        votes: {
-          type: Object,
-          notify: true
+        voted: {
+          type: Number,
+          value: 0
+        },
+
+        voteCount: {
+          type: Number,
+          value: 0
         },
 
         lastUpdated: {
@@ -149,8 +154,9 @@
       },
 
       observers: [
-        'updateTextContent(title, description, tags)',
-        'setHasCurrentUserVoted(currentUserId, votes, currentSpace)'
+        'updateTextContent(title, description, tags)'
+        //'setHasCurrentUserVoted(currentUserId, votes, currentSpace)',
+        //'setVoteCount(votes, currentSpace)'
       ],
 
       emptyClass(content, placeholderClass, editable) {
@@ -176,8 +182,8 @@
         this.$.tags.textContent = tags;
       },
 
-      _voteCount: function (votes){
-        return (votes && votes[this.id]) ? votes[this.id].length : 0;
+      setVoteCount: function (votes){
+        this.voteCount = (votes && votes[this.id]) ? votes[this.id].length : 0;
       },
 
       onInput() {
@@ -216,20 +222,6 @@
 
         this.votes[this.id].splice(voteToCancelIndex,1);
         this.notifyPath('votes.' + this.id);
-      },
-
-      setHasCurrentUserVoted: function(currentUserId, votes, currentSpace){
-        this.hasCurrentUserVoted = 0;
-
-        if (votes && votes[this.id]) {
-          let self = this;
-
-          votes[this.id].map(function(vote){
-            if(vote.createdBy === currentUserId){
-              self.hasCurrentUserVoted = 1;
-            }
-          });
-        }
       }
     })
   </script>

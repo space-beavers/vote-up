@@ -1,16 +1,58 @@
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="vu-behavior.html">
+<link rel="import" href="vu-editor.html">
+
+
 <dom-module id="vu-space">
   <template>
-    {{name}}
+    <style include="vote-up-app-shared-styles"></style>
+
+    <firebase-document
+        id="document"
+        app-name="vote-up"
+        path="[[editableTopicId]]"
+        data="{{editableTopic}}">
+    </firebase-document>
+
+    <vu-editor
+        id="editor"
+        topic="{{editableTopic}}"
+        on-close="commitChange">
+    </vu-editor>
+
+    <div class="topics">
+      <template is="dom-repeat" items="[[topics]]" as="topic">
+      <vu-topic
+          id="[[topic.name]]"
+          title="[[topic.value.title]]"
+          description="[[topic.value.description]]"
+          tags="[[topic.value.tags]]"
+          vote-count="[[topicVoteCount(topic.name)]]"
+          voted="[[hasCurrentUserVotedOnTopic(topic.name)]]"
+          current-space="{{currentSpace}}"
+          current-user-id="[[user.uid]]"
+          on-tap="edit">
+      </vu-topic>
+      </template>
+    </div>
   </template>
   <script>
     Polymer({
       is: 'vu-space',
 
       behaviors: [
-        "VoteUpSpaceBehavior"
+        MyBehaviors.VoteUpAppBehavior
+      ],
+
+      observers: [
+        '_onCurrentSpaceChange(currentSpace)'
       ],
 
       properties: {
+        currentSpace: {
+          type: Object
+        },
+
         name: {
           type: String
         },
@@ -21,7 +63,39 @@
 
         topics: {
           type: Array
+        },
+
+        user: {
+          type: Object
         }
+      },
+
+      _onCurrentSpaceChange: function(currentSpace, previousSpace){
+        if(Object.keys(currentSpace).length !== 0){
+          this.name = currentSpace.name;
+          this.topicsVote = currentSpace.topicVotes;
+          this.topics = this.firebaseObjectToArray(currentSpace.topics);
+        }
+      },
+
+      topicVoteCount: function(topicId){
+        return (this.topicsVote && this.topicsVote[topicId]) ? this.topicsVote[topicId].length : 0;
+      },
+
+      hasCurrentUserVotedOnTopic: function (topicId){
+        let hasCurrentUserVoted = 0;
+
+        if (this.topicsVote && this.topicsVote[topicId]) {
+
+          this.topicsVote[topicId].map(vote => {
+            debugger;
+            if(vote.createdBy === this.user.uid){
+              hasCurrentUserVoted = 1;
+            }
+          }, this);
+        }
+
+        return hasCurrentUserVoted;
       }
     })
   </script>
