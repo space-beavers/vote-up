@@ -106,10 +106,8 @@
         font-size: .9rem;
       }
 
-      .user-initials,
-      .vote-button {
-        background: #666;
-        border-radius:30px;
+      .button-badge {
+        border-radius:50%;
         color: #fff;
         font-size: 1rem;
         height: 20px;
@@ -117,6 +115,14 @@
         text-transform: uppercase;
         width: 20px;
         margin-right: 16px;
+      }
+
+      .user-initials {
+        background: #656565;
+      }
+
+      .vote-button {
+        background: #999;
       }
 
       .tags {
@@ -163,7 +169,7 @@
     <!-- TODO: make edit/view version of a topic-card -->
     <paper-card>
     <div class="topic-head">
-      <div class="user-initials">VU</div>
+      <div class="user-initials button-badge">VU</div>
       <div class="topic-title">
         <h3
           id="title"
@@ -198,7 +204,7 @@
     </div>
 
     <div class="topic-footer">
-      <div class="vote-button" on-tap="voteToggle">
+      <div class="vote-button button-badge" on-tap="voteToggle">
         +1
       </div>
       <span class="vote-count">{{voteCount}} upvoted this topic</span>
