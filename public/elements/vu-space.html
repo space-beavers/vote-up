@@ -48,6 +48,11 @@
         '_onCurrentSpaceChange(currentSpace)'
       ],
 
+      listeners: {
+        'cw-vote-up': 'onVoteUp',
+        'cw-vote-cancel': 'onVoteCancel'
+      },
+
       properties: {
         currentSpace: {
           type: Object
@@ -94,8 +99,41 @@
             }
           }, this);
         }
-
         return hasCurrentUserVoted;
+      },
+
+      onVoteUp: function(e) {
+        let topicId = e.srcElement.parentElement.id;
+        let votes = this.currentSpace.topicVotes;
+        let vote = {
+          createdBy: this.user.uid,
+          createdTime: new Date(),
+          value: 1
+        };
+
+        // If first vote on space
+        if (!votes) votes = {};
+
+        // If first vote on topic, initialize a key with topic id
+        if (!votes[topicId]) votes[topicId] = [];
+
+        votes[topicId].push(vote);
+        this.notifyPath('currentSpace.topicVotes.' + topicId);
+      },
+
+      onVoteCancel: function(e) {
+        let topicId = e.srcElement.parentElement.id;
+        let votes = this.currentSpace.topicVotes;
+        let voteToCancelIndex;
+
+        for (let i = 0; i < votes[topicId].length; i++) {
+          if(votes[topicId][i].createdBy === this.currentUserId){
+            let voteToCancelIndex = i;
+          }
+        }
+
+        votes[topicId].splice(voteToCancelIndex,1);
+        this.notifyPath('currentSpace.topicVotes.' + topicId);
       }
     })
   </script>

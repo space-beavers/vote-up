@@ -148,9 +148,7 @@
       },
 
       listeners: {
-        input: 'onInput',
-        'cw-vote-up': 'onVoteUp',
-        'cw-vote-cancel': 'onVoteCancel'
+        input: 'onInput'
       },
 
       observers: [
@@ -192,36 +190,6 @@
           this.description = this.$.description.innerText;
           this.tags = this.$.tags.innerText;
         });
-      },
-
-      onVoteUp: function() {
-        let vote = {
-          createdBy: this.currentUserId,
-          createdTime: new Date(),
-          value: 1
-        };
-
-        // If first vote on space
-        if (!this.votes) this.votes = {};
-
-        // If first vote on topic, initialize a key with topic id
-        if (!this.votes[this.id]) this.votes[this.id] = [];
-
-        this.votes[this.id].push(vote);
-        this.notifyPath('votes.' + this.id);
-      },
-
-      onVoteCancel: function() {
-        let voteToCancelIndex;
-
-        for (let i = 0; i < this.votes[this.id].length; i++) {
-          if(this.votes[this.id][i].createdBy === this.currentUserId){
-            let voteToCancelIndex = i;
-          }
-        }
-
-        this.votes[this.id].splice(voteToCancelIndex,1);
-        this.notifyPath('votes.' + this.id);
       }
     })
   </script>
