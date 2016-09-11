@@ -174,12 +174,12 @@
     </div>
     <div class="topic-body">
         <iron-image style="width:250px; height:150px; margin-left: -16px; background-color: lightgray;"
-        sizing="cover" preload fade src="http://placehold.it/250x150" hidden$="[[editable]]"></iron-image>
+        sizing="cover" preload fade src="[[imgSrc]]" id="miniPreviewImg" hidden$="[[editable]]"></iron-image>
         <iron-image style="width:480px; height:250px; margin-left: -16px; background-color: lightgray;"
       sizing="cover" preload fade src="[[imgSrc]]" id="previewImg" hidden$="[[!editable]]"></iron-image>
         <br>
           <paper-input label="URL path to image" type="search" hidden$="[[!editable]]" id="imgUrl"
-              placeholder="e.g. http://www.placehol.it/cats.png" autosave="test" results="5" on-change="urlInputChange">
+              placeholder="e.g. http://lorempixel.com/480/250/" autosave="test" results="5" on-change="urlInputChange">
           </paper-input>
         <!-- <file-upload multi="true"
                       droppable
