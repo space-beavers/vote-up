@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-tags/paper-tags.html">
+<link rel="import" href="../bower_components/paper-tags/paper-tags-input.html">
 
 <dom-module id="vu-topic">
   <template>
@@ -13,10 +15,24 @@
         padding: 1em;
         @apply(--paper-font-common-base);
         @apply(--shadow-elevation-2dp);
+        @apply(--layout-vertical);
         border-radius: 2px;
         height: 250px;
         width: 250px;
         position: relative;
+
+        --paper-tag-item: {
+          border: 0;
+          background-color: #eeeeee;
+          border-radius: 16px;
+          color: #757575;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          padding: 4px 8px;
+          font-family: 'Roboto', 'Noto', sans-serif;
+          text-align: center;
+        };
       }
 
       h3 {
@@ -65,8 +81,20 @@
       .topic-footer {
         @apply(--layout-horizontal);
         @apply(--layout-center);
+      }
 
+      .topic-head {
         margin-bottom: 16px;
+      }
+
+      .topic-body {
+        @apply(--layout-flex);
+      }
+
+      .topic-title {
+        flex: 0 0 auto;
+        max-width: 125px;
+        word-break: break-word;
       }
 
       .topic-head .topic-title {
@@ -76,11 +104,6 @@
       .vote-count {
         color: #666;
         font-size: .9rem;
-      }
-
-      .topic-footer {
-        position: absolute;
-        bottom: 0;
       }
 
       .user-initials,
@@ -104,31 +127,35 @@
       :host[voted] .vote-button {
         background: #2196f3;
       }
+
+      .title,
+      .tags,
+      .description {
+        outline: 0px solid transparent;
+      }
     </style>
 
     <!-- TODO: make edit/view version of a topic-card -->
     <div class="topic-head">
-      <div class="user-initials">ML</div>
+      <div class="user-initials">VU</div>
       <div class="topic-title">
         <h3
           id="title"
-          class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
+          class$="title [[emptyClass(title, 'titlePlaceholder', editable)]]"
           contenteditable$="[[editable]]"></h3>
-
-        <div class="tags">
-          <p
-            id="tags"
-            class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
-            contenteditable$="[[editable]]"></p>
-        </div>
       </div>
       <iron-icon hidden$="[[!isEditable]]" icon="editor:mode-edit"></iron-icon>
     </div>
-
-    <p
-      id="description"
-      class$="description [[emptyClass(description, 'descPlaceholder', editable)]]"
-      contenteditable$="[[editable]]"></p>
+    <div class="topic-body">
+        <div class="tags">
+          <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
+        </div>
+         <paper-tags-input label="Tags" hidden$="[[!editable]]" show-counter="tags" items="{{tags}}" maxlength="10"></paper-tags-input>
+        <p
+        id="description"
+        class$="description [[emptyClass(description, 'descPlaceholder', editable)]]"
+        contenteditable$="[[editable]]"></p>
+    </div>
 
     <div class="topic-footer">
       <div class="vote-button" on-tap="voteToggle">
@@ -217,8 +244,14 @@
 
       observers: [
         'updateTextContent(title, description, tags)',
-        'computeCreatedByCurrentUser(createdBy, currentUserId)'
+        'computeCreatedByCurrentUser(createdBy, currentUserId)',
+        'tagsChanged(tags)'
       ],
+
+      tagsChanged: function(newValue, oldValue){
+        if(typeof newValue ===  'undefined')
+        this.tags = [];
+      },
 
       emptyClass(content, placeholderClass, editable) {
         if (editable) {
@@ -240,7 +273,7 @@
       updateTextContent(title, description, tags) {
         this.$.title.textContent = title;
         this.$.description.textContent = description;
-        this.$.tags.textContent = tags;
+        this.$.tags.items = tags;
       },
 
       setVoteCount: function (votes){
@@ -251,7 +284,7 @@
         this.async(function() {
           this.title = this.$.title.innerText;
           this.description = this.$.description.innerText;
-          this.tags = this.$.tags.innerText;
+          //this.tags = this.$.tags.innerText;
         });
       },
 

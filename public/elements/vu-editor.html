@@ -50,6 +50,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       vu-topic {
+        @apply(--layout-vertical);
         display: block;
         position: absolute;
         top: 0px;
@@ -57,6 +58,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       :host(.open) vu-topic {
+        @apply(--layout-vertical);
         position: relative;
         margin: auto;
         width: calc(100vw - 20px);
@@ -112,7 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       open(topicElement) {
         this._setOpened(true);
         if (topicElement) {
-          this.topic = { title: topicElement.title, description: topicElement.description, tags: topicElement.tags};
+          this.topic = { title: topicElement.title, description: topicElement.description, tags: topicElement.tags ? topicElement.tags : [], createdBy: this.parentElement.user.uid};
 
           this.transitionInFrom(topicElement.getBoundingClientRect());
         } else {
@@ -122,7 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       create() {
         this._setOpened(true);
-        this.topic = { title: '', description: '', tags: '', votes: 0, createdBy: "" };
+        this.topic = { title: '', description: '', tags: '', createdBy: this.parentElement.user.uid };
         this.transitionInFrom(this.getBoundingClientRect());
       },
 
