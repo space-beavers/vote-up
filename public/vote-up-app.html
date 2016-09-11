@@ -73,7 +73,7 @@
             persisted-data="{{persistedTopics}}">
         </app-indexeddb-mirror> -->
 
-        <vu-space topics="[[topics]]" user="{{user}}" current-space="{{currentSpace}}"></vu-space>
+        <vu-space topics="[[topics]]" user="{{user}}" current-space-id=[[currentSpaceId]] current-space="{{currentSpace}}"></vu-space>
         <paper-fab icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></paper-fab>
       </div>
     <!--</paper-drawer-panel>-->
@@ -133,7 +133,7 @@
 
       _getCurrentUserTopics: function(currentSpaceTopicsArray) {
         let currentUserTopics = [];
-        debugger;
+
         // Select only topics with createdBy attr == user.id
         this.firebaseObjectToArray(this.currentSpace.topics).map(
           topic => { if (topic.value.createdBy === this.user.uid) currentUserTopics.push(topic); });
