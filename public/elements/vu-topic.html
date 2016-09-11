@@ -176,9 +176,17 @@
         <iron-image style="width:250px; height:150px; margin-left: -16px; background-color: lightgray;"
         sizing="cover" preload fade src="http://placehold.it/250x150" hidden$="[[editable]]"></iron-image>
         <iron-image style="width:480px; height:250px; margin-left: -16px; background-color: lightgray;"
-      sizing="cover" preload fade src="http://lorempixel.com/480/250" hidden$="[[!editable]]"></iron-image>
+      sizing="cover" preload fade src="[[imgSrc]]" id="previewImg" hidden$="[[!editable]]"></iron-image>
         <br>
-        <file-upload multi="true" droppable accept="image/*" hidden$="[[!editable]]" target="/path/to/destination">Upload Image</file-upload>
+          <paper-input label="URL path to image" type="search" hidden$="[[!editable]]" id="imgUrl"
+              placeholder="e.g. http://www.placehol.it/cats.png" autosave="test" results="5" on-change="urlInputChange">
+          </paper-input>
+        <!-- <file-upload multi="true"
+                      droppable
+                      drop-text="Drop Images Here"
+                      accept="image/*"
+                      hidden$="[[!editable]]"
+                      target="/path/to/destination">Upload Image</file-upload> -->
         <div class="tags">
           <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
         </div>
@@ -206,6 +214,12 @@
         id: {
           type: String,
           value: 'none'
+        },
+
+        imgSrc: {
+          type: String,
+          notify: true,
+          value: 'http://placehold.it/480x250'
         },
 
         editable: {
@@ -280,6 +294,12 @@
         'computeCreatedByCurrentUser(createdBy, currentUserId)',
         'tagsChanged(tags)'
       ],
+
+      urlInputChange: function() {
+        console.log('got here');
+        console.log(this.$.imgUrl.value);
+        this.imgSrc = this.$.imgUrl.value;
+      },
 
       tagsChanged: function(newValue, oldValue){
         if(typeof newValue ===  'undefined')
