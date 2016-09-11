@@ -37,7 +37,7 @@
       },
 
       edit(event) {
-        if (this.isEditable) {
+        if (event.currentTarget.isEditable) {
           let topicElement = Polymer.dom(event).localTarget;
           this.editableTopicId = this.toEditableId(topicElement.id);
 

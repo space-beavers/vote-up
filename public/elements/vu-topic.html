@@ -65,7 +65,12 @@
       .topic-footer {
         @apply(--layout-horizontal);
         @apply(--layout-center);
+
         margin-bottom: 16px;
+      }
+
+      .topic-head .topic-title {
+        @apply(--layout-flex);
       }
 
       .vote-count {
@@ -104,7 +109,7 @@
     <!-- TODO: make edit/view version of a topic-card -->
     <div class="topic-head">
       <div class="user-initials">ML</div>
-      <div>
+      <div class="topic-title">
         <h3
           id="title"
           class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
@@ -117,6 +122,7 @@
             contenteditable$="[[editable]]"></p>
         </div>
       </div>
+      <iron-icon hidden$="[[!isEditable]]" icon="editor:mode-edit"></iron-icon>
     </div>
 
     <p
@@ -136,7 +142,6 @@
       is: 'vu-topic',
 
       properties: {
-        createdBy: String,
 
         id: {
           type: String,
@@ -146,6 +151,11 @@
         editable: {
           type: Boolean,
           reflectToAttribute: true,
+          value: false
+        },
+
+        isEditable: {
+          type: Boolean,
           value: false
         },
 
@@ -191,6 +201,10 @@
           type: String
         },
 
+        createdBy: {
+          type: String
+        },
+
         hasCurrentUserVoted: {
           type: Number,
           value: 0
@@ -202,7 +216,8 @@
       },
 
       observers: [
-        'updateTextContent(title, description, tags)'
+        'updateTextContent(title, description, tags)',
+        'computeCreatedByCurrentUser(createdBy, currentUserId)'
       ],
 
       emptyClass(content, placeholderClass, editable) {
@@ -238,6 +253,10 @@
           this.description = this.$.description.innerText;
           this.tags = this.$.tags.innerText;
         });
+      },
+
+      computeCreatedByCurrentUser: function(createdBy, currentUserId){
+        this.isEditable = (createdBy === currentUserId);
       },
 
       voteToggle(ev) {
