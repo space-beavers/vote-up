@@ -93,7 +93,7 @@
         if (this.topicsVote && this.topicsVote[topicId]) {
 
           this.topicsVote[topicId].map(vote => {
-            debugger;
+
             if(vote.createdBy === this.user.uid){
               hasCurrentUserVoted = 1;
             }
