@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
 <dom-module id="vu-topic">
   <template>
     <style>
@@ -12,24 +14,18 @@
         @apply(--paper-font-common-base);
         @apply(--shadow-elevation-2dp);
         border-radius: 2px;
+        height: 250px;
+        width: 250px;
+        position: relative;
       }
 
-      .hidden {
-        display: none;
-      }
-
-      :host[editable] cw-vote {
-        display: none;
-      }
-
-      h1 {
-        font-size: 1.15em;
+      h3 {
+        font-size: 1rem;
         margin: 0;
-        white-space: pre-wrap;
       }
 
-      h1:not(.hidden)+p {
-        margin-top: 1em;
+      :host[editable] .topic-footer {
+        display: none;
       }
 
       p {
@@ -64,27 +60,76 @@
         line-height: 0;
         pointer-events: none;
       }
+
+      .topic-head,
+      .topic-footer {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        margin-bottom: 16px;
+      }
+
+      .vote-count {
+        color: #666;
+        font-size: .9rem;
+      }
+
+      .topic-footer {
+        position: absolute;
+        bottom: 0;
+      }
+
+      .user-initials,
+      .vote-button {
+        background: #555;
+        border-radius:30px;
+        color: #fff;
+        font-size: 1.4rem;
+        height: 30px;
+        padding: 8px;
+        text-transform: uppercase;
+        width: 30px;
+        margin-right: 16px;
+      }
+
+      .tags {
+        color: #555;
+        font-size: .9rem;
+      }
+
+      :host[voted] .vote-button {
+        background: #2196f3;
+      }
     </style>
 
     <!-- TODO: make edit/view version of a topic-card -->
-    <h1
-        id="title"
-        class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></h1>
-        <p
-        id="id">{{id}}</p>
-    <p
-        id="description"
-        class$="[[emptyClass(description, 'descPlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></p>
-    <p
-        id="tags"
-        class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
-        contenteditable$="[[editable]]"></p>
-    <span>Votes:</span>
+    <div class="topic-head">
+      <div class="user-initials">ML</div>
+      <div>
+        <h3
+          id="title"
+          class$="[[emptyClass(title, 'titlePlaceholder', editable)]]"
+          contenteditable$="[[editable]]"></h3>
 
-    <cw-vote value="{{voteCount}}" user-value="{{voted}}"></cw-vote>
+        <div class="tags">
+          <p
+            id="tags"
+            class$="[[emptyClass(tags, 'tagsPlaceholder', editable)]]"
+            contenteditable$="[[editable]]"></p>
+        </div>
+      </div>
+    </div>
 
+    <p
+      id="description"
+      class$="description [[emptyClass(description, 'descPlaceholder', editable)]]"
+      contenteditable$="[[editable]]"></p>
+
+    <div class="topic-footer">
+      <div class="vote-button" on-tap="voteToggle">
+        +1
+      </div>
+      <span class="vote-count">{{voteCount}} upvoted this topic</span>
+    </div>
   </template>
   <script>
     Polymer({
@@ -127,8 +172,9 @@
         },
 
         voted: {
-          type: Number,
-          value: 0
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         },
 
         voteCount: {
@@ -157,8 +203,6 @@
 
       observers: [
         'updateTextContent(title, description, tags)'
-        //'setHasCurrentUserVoted(currentUserId, votes, currentSpace)',
-        //'setVoteCount(votes, currentSpace)'
       ],
 
       emptyClass(content, placeholderClass, editable) {
@@ -194,6 +238,16 @@
           this.description = this.$.description.innerText;
           this.tags = this.$.tags.innerText;
         });
+      },
+
+      voteToggle(ev) {
+        ev.stopPropagation();
+
+        if(this.voted) {
+          this.fire('topic-vote-cancel');
+        } else {
+          this.fire('topic-vote-up');
+        }
       }
     })
   </script>

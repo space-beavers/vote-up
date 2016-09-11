@@ -49,8 +49,8 @@
       ],
 
       listeners: {
-        'cw-vote-up': 'onVoteUp',
-        'cw-vote-cancel': 'onVoteCancel'
+        'topic-vote-up': 'onVoteUp',
+        'topic-vote-cancel': 'onVoteCancel'
       },
 
       properties: {
@@ -88,14 +88,14 @@
       },
 
       hasCurrentUserVotedOnTopic: function (topicId){
-        let hasCurrentUserVoted = 0;
+        let hasCurrentUserVoted = false;
 
         if (this.topicsVote && this.topicsVote[topicId]) {
 
           this.topicsVote[topicId].map(vote => {
 
             if(vote.createdBy === this.user.uid){
-              hasCurrentUserVoted = 1;
+              hasCurrentUserVoted = true;
             }
           }, this);
         }
@@ -103,8 +103,7 @@
       },
 
       onVoteUp: function(e) {
-        let topicId = e.srcElement.parentElement.id;
-        let votes = this.currentSpace.topicVotes;
+        let topicId = e.srcElement.id;
         let vote = {
           createdBy: this.user.uid,
           createdTime: new Date(),
@@ -112,7 +111,9 @@
         };
 
         // If first vote on space
-        if (!votes) votes = {};
+        if (!this.currentSpace.topicVotes) this.currentSpace.topicVotes = {};
+
+        let votes = this.currentSpace.topicVotes;
 
         // If first vote on topic, initialize a key with topic id
         if (!votes[topicId]) votes[topicId] = [];
@@ -122,7 +123,7 @@
       },
 
       onVoteCancel: function(e) {
-        let topicId = e.srcElement.parentElement.id;
+        let topicId = e.srcElement.id;
         let votes = this.currentSpace.topicVotes;
         let voteToCancelIndex;
 
