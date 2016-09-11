@@ -174,11 +174,11 @@
     </div>
     <div class="topic-body">
       <iron-image style="width:250px; height:150px; margin-left: -16px; background-color: lightgray;"
-  sizing="cover" preload fade src="http://lorempixel.com/250/150" hidden$="[[editable]]"></iron-image>
+  sizing="cover" preload fade src="http://placehold.it/250x150" hidden$="[[editable]]"></iron-image>
   <iron-image style="width:480px; height:250px; margin-left: -16px; background-color: lightgray;"
 sizing="cover" preload fade src="http://lorempixel.com/480/250" hidden$="[[!editable]]"></iron-image>
   <br>
-  <file-upload multi="true" droppable accept="image/*" hidden$="[[!editable]]">Upload Image</file-upload>
+  <file-upload multi="true" droppable accept="image/*" hidden$="[[!editable]]" target="/path/to/destination">Upload Image</file-upload>
         <div class="tags">
           <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
         </div>
