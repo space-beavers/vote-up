@@ -36,6 +36,8 @@
       </vu-topic>
       </template>
     </div>
+
+    <paper-fab icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></paper-fab>
   </template>
   <script>
     Polymer({

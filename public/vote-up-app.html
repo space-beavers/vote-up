@@ -73,8 +73,8 @@
             persisted-data="{{persistedTopics}}">
         </app-indexeddb-mirror> -->
 
-        <vu-space topics="[[topics]]" user="{{user}}" current-space-id=[[currentSpaceId]] current-space="{{currentSpace}}"></vu-space>
-        <paper-fab icon="add" on-tap="create" aria-label="Add topic" hidden$="[[!online]]"></paper-fab>
+        <vu-space id="space" topics="[[topics]]" user="{{user}}" current-space-id=[[currentSpaceId]] current-space="{{currentSpace}}"></vu-space>
+
       </div>
     <!--</paper-drawer-panel>-->
   </template>
