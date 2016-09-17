@@ -115,6 +115,12 @@
         text-transform: uppercase;
         width: 20px;
         margin-right: 16px;
+        transition: all .1s ease-in-out;
+        cursor: pointer;
+      }
+
+      .vote-button:hover, .vote-button:focus {
+        background: #888;
       }
 
       .user-initials {
@@ -132,6 +138,9 @@
 
       :host[voted] .vote-button {
         background: #2196f3;
+      }
+      :host[voted] .vote-button:hover {
+        background: #1e88e5;
       }
 
       .title,
