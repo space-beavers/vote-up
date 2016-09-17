@@ -9,20 +9,13 @@
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
-        background-color: #fafafa;
-        color: #212121;
-        padding: 1em;
-        @apply(--paper-font-common-base);
-        @apply(--shadow-elevation-2dp);
         @apply(--layout-vertical);
-        border-radius: 2px;
         width: 250px;
         position: relative;
 
         --paper-tag-item: {
           border: 0;
-          background-color: #eeeeee;
+          background-color: transparent;
           border-radius: 16px;
           color: #757575;
           font-size: 14px;
@@ -32,6 +25,14 @@
           font-family: 'Roboto', 'Noto', sans-serif;
           text-align: center;
         };
+      }
+
+      paper-card {
+        padding: 1em;
+        @apply(--paper-font-common-base);
+        @apply(--shadow-elevation-2dp);
+        @apply(--layout-vertical);
+        max-width: 850px;
       }
 
       h3 {
@@ -105,10 +106,8 @@
         font-size: .9rem;
       }
 
-      .user-initials,
-      .vote-button {
-        background: #666;
-        border-radius:30px;
+      .button-badge {
+        border-radius:50%;
         color: #fff;
         font-size: 1rem;
         height: 20px;
@@ -122,6 +121,14 @@
 
       .vote-button:hover, .vote-button:focus {
         background: #888;
+      }
+
+      .user-initials {
+        background: #656565;
+      }
+
+      .vote-button {
+        background: #999;
       }
 
       .tags {
@@ -158,9 +165,20 @@
       }
     </style>
 
+    <!-- <paper-card heading="Emmental" image="http://placehold.it/350x150/FFC107/000000" alt="Emmental">
+    <div class="card-content">
+    Emmentaler or Emmental is a yellow, medium-hard cheese that originated in the area around Emmental, Switzerland. It is one of the cheeses of Switzerland, and is sometimes known as Swiss cheese.
+    </div>
+    <div class="card-actions">
+    <paper-button>Share</paper-button>
+    <paper-button>Explore!</paper-button>
+    </div>
+    </paper-card> -->
+
     <!-- TODO: make edit/view version of a topic-card -->
+    <paper-card>
     <div class="topic-head">
-      <div class="user-initials">VU</div>
+      <div class="user-initials button-badge">VU</div>
       <div class="topic-title">
         <h3
           id="title"
@@ -170,6 +188,20 @@
       <paper-icon-button hidden$="[[!isEditable]]" icon="editor:mode-edit"></paper-icon-button>
     </div>
     <div class="topic-body">
+        <iron-image style="width:250px; height:150px; margin-left: -16px; background-color: lightgray;"
+        sizing="cover" preload fade src="[[imgSrc]]" id="miniPreviewImg" hidden$="[[editable]]"></iron-image>
+        <iron-image style="width:480px; height:250px; margin-left: -16px; background-color: lightgray;"
+      sizing="cover" preload fade src="[[imgSrc]]" id="previewImg" hidden$="[[!editable]]"></iron-image>
+        <br>
+          <paper-input label="URL path to image" type="search" hidden$="[[!editable]]" id="imgUrl"
+              placeholder="e.g. http://lorempixel.com/480/250/" autosave="test" results="5" on-change="urlInputChange">
+          </paper-input>
+        <!-- <file-upload multi="true"
+                      droppable
+                      drop-text="Drop Images Here"
+                      accept="image/*"
+                      hidden$="[[!editable]]"
+                      target="/path/to/destination">Upload Image</file-upload> -->
         <div class="tags">
           <paper-tags  id="tags" is-tag-removable$="[[editable]]" icons="icons:favorite" hidden$="[[editable]]" label-accessor="label" items="{{tags}}"></paper-tags>
         </div>
@@ -181,11 +213,12 @@
     </div>
 
     <div class="topic-footer">
-      <div class="vote-button" on-tap="voteToggle">
+      <div class="vote-button button-badge" on-tap="voteToggle">
         +1
       </div>
       <span class="vote-count">{{voteCount}} upvoted this topic</span>
     </div>
+    </paper-card>
   </template>
   <script>
     Polymer({
@@ -196,6 +229,12 @@
         id: {
           type: String,
           value: 'none'
+        },
+
+        imgSrc: {
+          type: String,
+          notify: true,
+          value: 'http://placehold.it/480x250'
         },
 
         editable: {
@@ -270,6 +309,12 @@
         'computeCreatedByCurrentUser(createdBy, currentUserId)',
         'tagsChanged(tags)'
       ],
+
+      urlInputChange: function() {
+        console.log('got here');
+        console.log(this.$.imgUrl.value);
+        this.imgSrc = this.$.imgUrl.value;
+      },
 
       tagsChanged: function(newValue, oldValue){
         if(typeof newValue ===  'undefined')

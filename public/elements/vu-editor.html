@@ -23,10 +23,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         right: 0;
         bottom: 0;
         z-index: 1;
+        margin-top: 12px;
       }
 
+      /*height set to 300% so the splash overtakes the entire screen*/
       :host([opened]) {
         display: block;
+        height: 300%;
       }
 
       :host(.open) {
