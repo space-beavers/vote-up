@@ -38,8 +38,8 @@
     "paper-listbox": "PolymerElements/paper-listbox#^1.0.0",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.3.5",
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
-    "polymer": "Polymer/polymer^1.6.1",
-    "paper-tags-input": "cheonhyangzhang/paper-tags-input^1.2.3",
+    "polymer": "Polymer/polymer#^1.6.1",
+    "paper-tags-input": "cheonhyangzhang/paper-tags-input#^1.2.4",
     "paper-tags": "maxletourneur/paper-tags",
     "file-upload" : "winhowes/file-upload#^1.8.1"
   }
