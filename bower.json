@@ -38,6 +38,6 @@
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
     "polymer": "^1.6.1",
     "paper-tags-input": "^1.2.3",
-    "paper-tags": "git@github.com:maxletourneur/paper-tags.git#master"
+    "paper-tags": "https://github.com/maxletourneur/paper-tags.git#master"
   }
 }
