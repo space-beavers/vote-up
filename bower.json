@@ -40,7 +40,7 @@
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
     "polymer": "Polymer/polymer#^1.6.1",
     "paper-tags-input": "cheonhyangzhang/paper-tags-input#^1.2.4",
-    "paper-tags": "maxletourneur/paper-tags",
+    "paper-tags": "https://github.com/maxletourneur/paper-tags.git#master",
     "paper-tags-input": "^1.2.3",
     "file-upload" : "winhowes/file-upload#^1.8.1"
   }
